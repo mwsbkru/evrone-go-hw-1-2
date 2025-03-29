@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
+	"log/slog"
 	"os"
 )
 
@@ -36,26 +37,29 @@ func main() {
 		os.Exit(1)
 	}
 
-	variousStruct := readJson(jsonFileName)
+	variousStruct, err := readJson(jsonFileName)
+	if err != nil {
+		slog.Error("Возникла ошибка при чтении JSON", slog.String("ошибка", err.Error()))
+		os.Exit(1)
+	}
+
 	printKeys(jsonKeys, variousStruct)
 }
 
-func readJson(jsonFileName string) map[string]any {
+func readJson(jsonFileName string) (map[string]any, error) {
 	var variousStruct map[string]any
 
 	fileBytes, err := os.ReadFile(jsonFileName)
 	if err != nil {
-		fmt.Printf("Ошибка при парсинге JSON: %v. Ошибка: %e\n", jsonFileName, err)
-		os.Exit(1)
+		return nil, fmt.Errorf("ошибка чтения файла: %w", err)
 	}
 
 	err = json.Unmarshal(fileBytes, &variousStruct)
 	if err != nil {
-		fmt.Printf("Ошибка при парсинге JSON: %v\n", err)
-		os.Exit(1)
+		return nil, fmt.Errorf("ошибка парсинга JSON: %w", err)
 	}
 
-	return variousStruct
+	return variousStruct, nil
 }
 
 func printKeys(jsonKeys []string, variousStruct map[string]any) {
