@@ -28,12 +28,12 @@ func main() {
 	flag.Parse()
 
 	if jsonFileName == "" {
-		fmt.Println("Не передано имя файла")
+		slog.Error("Не передано имя файла")
 		os.Exit(1)
 	}
 
 	if len(jsonKeys) == 0 {
-		fmt.Println("Нужно передать хотя бы один ключ для отображения")
+		slog.Error("Нужно передать хотя бы один ключ для отображения")
 		os.Exit(1)
 	}
 
